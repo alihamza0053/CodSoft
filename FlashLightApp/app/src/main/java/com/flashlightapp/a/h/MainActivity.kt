@@ -2,7 +2,9 @@ package com.flashlightapp.a.h
 
 import android.content.Context
 import android.hardware.camera2.CameraManager
+import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,6 +57,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun FlashLight(cameraManager: CameraManager, cameraID: String) {
+    var context = LocalContext.current
     var isFlashOn = remember {
         mutableStateOf(false)
     }
@@ -83,14 +87,18 @@ fun FlashLight(cameraManager: CameraManager, cameraID: String) {
             Spacer(modifier = Modifier.height(50.dp))
             Button(
                 onClick = {
-                    if (isFlashOn.value) {
-                        cameraManager.setTorchMode(cameraID, false)
-                        flashOnOff.value = "Off"
-                    } else {
-                        cameraManager.setTorchMode(cameraID, true)
-                        flashOnOff.value = "On"
+                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ){
+                        if (isFlashOn.value) {
+                            cameraManager.setTorchMode(cameraID, false)
+                            flashOnOff.value = "Off"
+                        } else {
+                            cameraManager.setTorchMode(cameraID, true)
+                            flashOnOff.value = "On"
+                        }
+                        isFlashOn.value = !isFlashOn.value
+                    }else{
+                        Toast.makeText(context,"Your Phone Do not Support Flash Light!", Toast.LENGTH_SHORT).show()
                     }
-                    isFlashOn.value = !isFlashOn.value
                 }, modifier = Modifier.padding(25.dp)
             ) {
                 Text(
