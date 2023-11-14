@@ -1,12 +1,15 @@
 package com.flashlightapp.a.h
 
 import android.content.Context
+import android.hardware.camera2.CameraAccessException
+import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -32,19 +35,23 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // camera Manager to handle flash light
         var cameraManager =
             applicationContext.getSystemService(Context.CAMERA_SERVICE) as CameraManager
         var cameraID = cameraManager.cameraIdList[0]
 
+        cameraManager.setTorchMode(cameraID, false)
         setContent {
             FlashLightAppTheme {
                 // A surface container using the 'background' color from the theme
 
-                    FlashLight(cameraManager, cameraID)
+                //flashlight fun
+                FlashLight(cameraManager, cameraID)
             }
         }
     }
 
+    //on Back Press
     override fun onBackPressed() {
         var cameraManager =
             applicationContext.getSystemService(Context.CAMERA_SERVICE) as CameraManager
@@ -55,7 +62,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
+// handle flash light
 @Composable
 fun FlashLight(cameraManager: CameraManager, cameraID: String) {
     var context = LocalContext.current
@@ -65,18 +72,12 @@ fun FlashLight(cameraManager: CameraManager, cameraID: String) {
     var flashOnOff = remember {
         mutableStateOf("Off")
     }
-    if (cameraID != null) {
-        isFlashOn.value = true
-        flashOnOff.value = "On"
-    }else{
-        isFlashOn.value = false
-        flashOnOff.value = "Off"
-    }
+
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().background(color = Color(0xff282828)),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Column(
             modifier = Modifier.padding(50.dp),
@@ -118,4 +119,17 @@ fun FlashLight(cameraManager: CameraManager, cameraID: String) {
             }
         }
     }
+}
+
+private fun isFlashOn(cameraManager: CameraManager, cameraId: String): Boolean {
+    try {
+        // Retrieve the current torch mode
+        val torchMode = cameraManager.getCameraCharacteristics(cameraId)
+            .get(CameraCharacteristics.FLASH_INFO_AVAILABLE)
+
+        return torchMode == true
+    } catch (e: CameraAccessException) {
+        e.printStackTrace()
+    }
+    return false
 }
