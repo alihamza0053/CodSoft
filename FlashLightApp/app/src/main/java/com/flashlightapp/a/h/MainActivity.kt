@@ -39,6 +39,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             FlashLightAppTheme {
                 // A surface container using the 'background' color from the theme
+
                     FlashLight(cameraManager, cameraID)
             }
         }
@@ -63,6 +64,13 @@ fun FlashLight(cameraManager: CameraManager, cameraID: String) {
     }
     var flashOnOff = remember {
         mutableStateOf("Off")
+    }
+    if (cameraID != null) {
+        isFlashOn.value = true
+        flashOnOff.value = "On"
+    }else{
+        isFlashOn.value = false
+        flashOnOff.value = "Off"
     }
 
     Column(
