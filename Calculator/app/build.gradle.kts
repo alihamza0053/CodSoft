@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.calculator.a.h.cs"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.calculator.a.h.cs"
@@ -66,4 +66,5 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+    implementation("org.mariuszgromada.math:MathParser.org-mXparser:5.2.1")
 }
