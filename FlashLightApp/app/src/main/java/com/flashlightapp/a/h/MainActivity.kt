@@ -40,6 +40,7 @@ class MainActivity : ComponentActivity() {
             applicationContext.getSystemService(Context.CAMERA_SERVICE) as CameraManager
         var cameraID = cameraManager.cameraIdList[0]
 
+        //flash turn off
         cameraManager.setTorchMode(cameraID, false)
         setContent {
             FlashLightAppTheme {
